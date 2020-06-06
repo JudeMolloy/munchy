@@ -6,6 +6,14 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+flask = "*"
+marshmallow = "*"
+flask-restful = "*"
+python-dotenv = "*"
+marshmallow-sqlalchemy = "*"
+flask-sqlalchemy = "*"
+flask-jwt-extended = "*"
+flask-marshmallow = "*"
 
 [requires]
 python_version = "3.8"
