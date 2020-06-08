@@ -1,23 +1,14 @@
-import os
-
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
+from blacklist import revoked_store
 
 from db import db
 from ma import ma
-from resources.user import UserRegister, User, UserLogin, TokenRefresh
+from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URI", "sqlite:///data.db"
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["PROPAGATE_EXCEPTIONS"] = True
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["PROPAGATE_EXCEPTIONS"] = True
-app.secret_key = os.environ.get("SECRET_KEY")
 
 api = Api(app)
 
@@ -26,13 +17,22 @@ jwt = JWTManager(app)
 # List of user_id's for admin users.
 ADMIN_IDENTITIES = [1,]
 
+EXPIRED_TOKEN = "The token has expired."
+INVALID_TOKEN = "The token is invalid."
+UNAUTHORIZED = "An access token is required."
+NEEDS_FRESH_TOKEN = "A fresh token is required."
+REVOKED_TOKEN = "The token has been revoked."
+
+
 @app.before_first_request
 def create_tables():
     db.create_all()
 
+
 @app.errorhandler(ValidationError)
 def handle_marshmallow_validation(err):
     return jsonify(err.messages), 400
+
 
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
@@ -41,14 +41,65 @@ def add_claims_to_jwt(identity):
     return {"is_admin": False}
 
 
+@jwt.token_in_blacklist_loader
+def check_if_token_is_revoked(decrypted_token):
+    jti = decrypted_token['jti']
+    entry = revoked_store.get(jti)
+    if entry is None:
+        return True
+    return entry == 'true'
+
+
+# Called when an expired token is used.
+@jwt.expired_token_loader
+def expired_token_callback():
+    return jsonify({
+        "description": EXPIRED_TOKEN,
+        "error": "token_expired"
+    }), 401
+
+
+@jwt.invalid_token_loader
+def invalid_token_callback(error):
+    return jsonify({
+        "description": INVALID_TOKEN,
+        "error": "invalid_token"
+    }), 401
+
+
+@jwt.unauthorized_loader
+def unauthorized_callback(error):
+    return jsonify({
+        "description": UNAUTHORIZED,
+        "error": "authorization_required"
+    }), 401
+
+
+@jwt.needs_fresh_token_loader
+def needs_fresh_token_callback():
+    return jsonify({
+        "description": NEEDS_FRESH_TOKEN,
+        "error": "fresh_token_required"
+    }), 401
+
+
+@jwt.revoked_token_loader
+def revoked_token_callback():
+    return jsonify({
+        "description": REVOKED_TOKEN,
+        "error": "revoked_token"
+    }), 401
+
 
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, "/login")
+api.add_resource(UserLogout, "/logout")
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(TokenRefresh, "/token-refresh")
 
 # Registers the db and marshmallow with the app .
 if __name__ == "__main__":
+    app.config.from_object('config.DevelopmentConfig')  # Can change this to production or testing.
     db.init_app(app)
     ma.init_app(app)
     app.run(port=5000, debug=True)
