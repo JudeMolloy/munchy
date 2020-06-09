@@ -15,6 +15,7 @@ flask-sqlalchemy = "*"
 flask-jwt-extended = "*"
 flask-marshmallow = "*"
 redis = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"

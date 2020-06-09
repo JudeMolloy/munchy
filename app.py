@@ -7,6 +7,7 @@ from blacklist import revoked_store
 from db import db
 from ma import ma
 from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout
+from resources.confirmation import Confirmation, ConfirmationByUser
 
 app = Flask(__name__)
 
@@ -96,6 +97,10 @@ api.add_resource(UserLogin, "/login")
 api.add_resource(UserLogout, "/logout")
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(TokenRefresh, "/token-refresh")
+api.add_resource(Confirmation, "/user_confirmation/<string:confirmation_id>")
+
+# Possibly just change to resend confirmation. Get rid of get method for testing.
+api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
 
 # Registers the db and marshmallow with the app .
 if __name__ == "__main__":

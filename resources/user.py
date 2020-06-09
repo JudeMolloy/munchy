@@ -1,3 +1,5 @@
+import traceback
+
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import (
@@ -11,9 +13,10 @@ from flask_jwt_extended import (
     get_raw_jwt,
     get_jti,
 )
-
+from libs.mailgun import MailgunException
 from blacklist import ACCESS_EXPIRES, REFRESH_EXPIRES, revoked_store
 from models.user import UserModel
+from models.confirmation import ConfirmationModel
 from schemas.user import UserSchema
 
 user_schema = UserSchema()
@@ -25,7 +28,9 @@ USER_NOT_FOUND = "User not found."
 USER_INVALID_CREDENTIALS = "Username or password is incorrect."
 ADMIN_PRIVILEGES_REQUIRED = "Admin privileges are required for this action."
 LOGOUT = "Successfully logged out."
-
+NOT_CONFIRMED = "Account not confirmed. Please check your email: {}."
+CREATION_FAILED = "Failed to create user."
+USER_CREATED_SUCCESSFULLY = "Account has been created successfully. An activation link has been sent to your email."
 
 class User(Resource):
     @classmethod
@@ -47,9 +52,20 @@ class UserRegister(Resource):
         if UserModel.find_by_email(user.email):
             return {"message": USER_EMAIL_EXISTS}, 400
 
-        user.save_to_db()
+        try:
+            user.save_to_db()
+            confirmation = ConfirmationModel(user.id)
+            confirmation.save_to_db()
+            user.send_confirmation_email()
+            return {"message": USER_CREATED_SUCCESSFULLY}, 201
+        except MailgunException as e:
+            user.delete_from_db()  # Must delete user as they won't be able to confirm account.
+            return {"message": str(e)}, 500
+        except:
+            traceback.print_exc()
+            user.delete_from_db()
+            return {"message": CREATION_FAILED}, 500
 
-        return {"message": USER_REGISTERED}, 201
 
     @classmethod
     def delete(cls):
@@ -72,22 +88,25 @@ class UserLogin(Resource):
         user = UserModel.find_by_email(email)
 
         if user and user.check_password(password):
-            access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_refresh_token(user.id)
+            confirmation = user.most_recent_confirmation
+            if confirmation and confirmation.confirmed:
+                access_token = create_access_token(identity=user.id, fresh=True)
+                refresh_token = create_refresh_token(user.id)
 
-            # Store the tokens in redis with a status of not currently revoked. We
-            # can use the `get_jti()` method to get the unique identifier string for
-            # each token. We can also set an expires time on these tokens in redis,
-            # so they will get automatically removed after they expire. We will set
-            # everything to be automatically removed shortly after the token expires
-            access_jti = get_jti(encoded_token=access_token)
-            refresh_jti = get_jti(encoded_token=refresh_token)
-            print("ACCESS JTI = {}".format(access_jti))
-            print("REFRESH JTI = {}".format(refresh_jti))
-            revoked_store.set(access_jti, 'false', ACCESS_EXPIRES * 1.2)
-            revoked_store.set(refresh_jti, 'false', REFRESH_EXPIRES * 1.2)
+                # Store the tokens in redis with a status of not currently revoked. We
+                # can use the `get_jti()` method to get the unique identifier string for
+                # each token. We can also set an expires time on these tokens in redis,
+                # so they will get automatically removed after they expire. We will set
+                # everything to be automatically removed shortly after the token expires
+                access_jti = get_jti(encoded_token=access_token)
+                refresh_jti = get_jti(encoded_token=refresh_token)
+                print("ACCESS JTI = {}".format(access_jti))
+                print("REFRESH JTI = {}".format(refresh_jti))
+                revoked_store.set(access_jti, 'false', ACCESS_EXPIRES * 1.2)
+                revoked_store.set(refresh_jti, 'false', REFRESH_EXPIRES * 1.2)
 
-            return {"access_token": access_token, "refresh_token": refresh_token}, 200
+                return {"access_token": access_token, "refresh_token": refresh_token}, 200
+            return {"message": NOT_CONFIRMED.format(user.email)}, 400
 
         return {"message": USER_INVALID_CREDENTIALS}, 401
 
