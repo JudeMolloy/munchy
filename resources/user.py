@@ -31,6 +31,9 @@ LOGOUT = "Successfully logged out."
 NOT_CONFIRMED = "Account not confirmed. Please check your email: {}."
 CREATION_FAILED = "Failed to create user."
 USER_CREATED_SUCCESSFULLY = "Account has been created successfully. An activation link has been sent to your email."
+USER_DELETE_FAILED = "Something went wrong when deleting your account."
+USER_DELETE_SUCCESSFUL = "Your account has been deleted."
+
 
 class User(Resource):
     @classmethod
@@ -41,6 +44,22 @@ class User(Resource):
             return {"message": USER_NOT_FOUND}, 404
 
         return user_schema.dump(user), 200
+
+    # Fresh JWT required as this is a powerful action
+    @classmethod
+    @fresh_jwt_required
+    def delete(cls):
+        # Find the current user. Users can only delete their own account.
+        current_user_id = get_jwt_identity()
+        current_user = UserModel.find_by_id(current_user_id)
+
+        if current_user:
+            try:
+                current_user.delete_from_db()
+                return {"message": USER_DELETE_SUCCESSFUL}, 200
+            except:
+                return {"message": USER_DELETE_FAILED}, 500
+
 
 
 class UserRegister(Resource):
@@ -66,12 +85,6 @@ class UserRegister(Resource):
             user.delete_from_db()
             return {"message": CREATION_FAILED}, 500
 
-
-    @classmethod
-    def delete(cls):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {"message": ADMIN_PRIVILEGES_REQUIRED}, 401
 
 
 class UserLogin(Resource):
