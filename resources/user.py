@@ -45,22 +45,6 @@ class User(Resource):
 
         return user_schema.dump(user), 200
 
-    # Fresh JWT required as this is a powerful action
-    @classmethod
-    @fresh_jwt_required
-    def delete(cls):
-        # Find the current user. Users can only delete their own account.
-        current_user_id = get_jwt_identity()
-        current_user = UserModel.find_by_id(current_user_id)
-
-        if current_user:
-            try:
-                current_user.delete_from_db()
-                return {"message": USER_DELETE_SUCCESSFUL}, 200
-            except:
-                return {"message": USER_DELETE_FAILED}, 500
-
-
 
 class UserRegister(Resource):
     @classmethod
@@ -84,7 +68,6 @@ class UserRegister(Resource):
             traceback.print_exc()
             user.delete_from_db()
             return {"message": CREATION_FAILED}, 500
-
 
 
 class UserLogin(Resource):
@@ -131,6 +114,23 @@ class UserLogout(Resource):
         jti = get_raw_jwt()['jti']  # jti is a unique identifier for a jwt.
         revoked_store.set(jti, 'true', REFRESH_EXPIRES * 1.2)
         return {"message": LOGOUT}, 200
+
+
+class UserDelete(Resource):
+    # Fresh JWT required as this is a powerful action
+    @classmethod
+    @fresh_jwt_required
+    def delete(cls):
+        # Find the current user. Users can only delete their own account.
+        current_user_id = get_jwt_identity()
+        current_user = UserModel.find_by_id(current_user_id)
+
+        if current_user:
+            try:
+                current_user.delete_from_db()
+                return {"message": USER_DELETE_SUCCESSFUL}, 200
+            except:
+                return {"message": USER_DELETE_FAILED}, 500
 
 
 class TokenRefresh(Resource):

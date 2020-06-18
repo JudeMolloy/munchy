@@ -17,7 +17,7 @@ class Mailgun:
     MAILGUN_DOMAIN = os.environ.get("MAILGUN_DOMAIN")
     MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
 
-    FROM_TITLE = "Boomerang Refunds"
+    FROM_TITLE = "Refund App"
     FROM_EMAIL = "mailgun@sandboxfed5b8a55a914ec393f8065fc7b34b04.mailgun.org"
 
     @classmethod
