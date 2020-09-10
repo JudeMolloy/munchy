@@ -35,6 +35,8 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    # Gmail API worsk without SSL.
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 
 class TestingConfig(Config):

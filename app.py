@@ -1,7 +1,12 @@
-from flask import Flask, jsonify, render_template
+import os
+import json
+
+from flask import Flask, jsonify, render_template, request
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
+from werkzeug.utils import redirect
+
 from blacklist import revoked_store
 
 from db import db
@@ -9,6 +14,7 @@ from ma import ma
 from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout, UserDelete
 from resources.confirmation import Confirmation, ConfirmationByUser
 from resources.plaid import Link, Item, LinkTest
+from resources.email import GmailLink, GmailLinkCallback
 
 app = Flask(__name__)
 
@@ -104,6 +110,9 @@ api.add_resource(Confirmation, "/user-confirmation/<string:confirmation_id>")
 api.add_resource(Link, "/link-bank-account")
 api.add_resource(LinkTest, "/link-test")
 api.add_resource(Item, "/items")
+
+api.add_resource(GmailLink, "/link-gmail")
+api.add_resource(GmailLinkCallback, "/link-gmail/callback")
 
 # Possibly just change to resend confirmation. Get rid of get method for testing.
 api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
