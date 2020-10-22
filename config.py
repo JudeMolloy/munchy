@@ -19,15 +19,6 @@ class Config(object):
     JWT_BLACKLIST_ENABLED= True
     JWT_BLACKLIST_TOKEN_CHECKS = ["access", "refresh"]
 
-    PLAID_CLIENT_ID = os.getenv('PLAID_CLIENT_ID')
-    PLAID_SECRET = os.getenv('PLAID_SECRET')
-    PLAID_PUBLIC_KEY = os.getenv('PLAID_PUBLIC_KEY')
-    # Use 'sandbox' to test with Plaid's Sandbox environment (username: user_good,
-    # password: pass_good)
-    # Use development to test with live users and credentials and production
-    # to go live
-    PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')
-
 
 class ProductionConfig(Config):
     DATABASE_URI = 'mysql://user@localhost/foo'  # Production URI
