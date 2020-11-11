@@ -1,11 +1,13 @@
 import os
 import json
+from functools import wraps
 
 from flask import Flask, jsonify, render_template, request
 from flask_restful import Api
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_jwt_claims
 from marshmallow import ValidationError
 from werkzeug.utils import redirect
+from flask_admin import Admin, expose, AdminIndexView
 
 from blacklist import revoked_store
 
@@ -13,7 +15,7 @@ from db import db
 from ma import ma
 from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout, UserDelete
 from resources.confirmation import Confirmation, ConfirmationByUser
-
+from flask_admin.contrib.sqla import ModelView
 
 app = Flask(__name__)
 
@@ -48,13 +50,28 @@ def add_claims_to_jwt(identity):
     return {"is_admin": False}
 
 
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        verify_jwt_in_request()
+        claims = get_jwt_claims()
+        if not claims["is_admin"]:
+            return jsonify({
+                "description": UNAUTHORIZED,
+                "error": "authorization_required"
+            }), 401
+        else:
+            return fn(*args, **kwargs)
+    return wrapper
+
+
 @jwt.token_in_blacklist_loader
 def check_if_token_is_revoked(decrypted_token):
-    jti = decrypted_token['jti']
+    jti = decrypted_token["jti"]
     entry = revoked_store.get(jti)
     if entry is None:
         return True
-    return entry == 'true'
+    return entry == "true"
 
 
 # Called when an expired token is used.
@@ -110,9 +127,13 @@ api.add_resource(Confirmation, "/user-confirmation/<string:confirmation_id>")
 # Possibly just change to resend confirmation. Get rid of get method for testing.
 api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
 
+
+# Admin
+
+
 # Registers the db and marshmallow with the app .
 if __name__ == "__main__":
-    app.config.from_object('config.DevelopmentConfig')  # Can change this to production or testing.
+    app.config.from_object("config.DevelopmentConfig")  # Can change this to production or testing.
     db.init_app(app)
     ma.init_app(app)
     app.run(port=5000, debug=True)

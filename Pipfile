@@ -16,6 +16,7 @@ flask-jwt-extended = "*"
 flask-marshmallow = "*"
 redis = "*"
 requests = "*"
+flask-uploads = "*"
 
 [requires]
 python_version = "3.8"

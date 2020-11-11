@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from db import db
 from libs.mailgun import Mailgun
 from models.confirmation import ConfirmationModel
-from models.item import ItemModel
 
 
 class UserModel(db.Model):
@@ -16,15 +15,15 @@ class UserModel(db.Model):
 
     # Delete orphan only works for PostgreSQL?
     confirmations = db.relationship("ConfirmationModel", lazy="dynamic", cascade="all, delete-orphan")
-    items = db.relationship("ItemModel", lazy="dynamic", cascade="all, delete-orphan")
+    #items = db.relationship("ItemModel", lazy="dynamic", cascade="all, delete-orphan")
 
     def __init__(self, email, password):
         self.email = email
         self.password = generate_password_hash(password)
 
-    @property
-    def get_items(self):
-        return self.items.all()
+    #@property
+    #def get_items(self):
+        #return self.items.all()
 
     @property
     def most_recent_confirmation(self):
