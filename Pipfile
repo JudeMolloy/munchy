@@ -17,6 +17,8 @@ flask-marshmallow = "*"
 redis = "*"
 requests = "*"
 flask-uploads = "*"
+flask-wtf = "*"
+wtforms = "*"
 
 [requires]
 python_version = "3.8"

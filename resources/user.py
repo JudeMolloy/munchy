@@ -1,6 +1,6 @@
 import traceback
 
-from flask import request
+from flask import request, make_response, render_template
 from flask_restful import Resource
 from flask_jwt_extended import (
     create_access_token,
@@ -142,3 +142,45 @@ class TokenRefresh(Resource):
         access_jti = get_jti(encoded_token=new_token)
         revoked_store.set(access_jti, 'false', ACCESS_EXPIRES * 1.2)
         return {"access_token": new_token}, 200
+
+
+class AdminLogin(Resource):
+    @classmethod
+    def get(cls):
+        headers = {"Content-Type": "text/html"}
+        return make_response(render_template("admin-login.html"), 200, headers)
+
+    @classmethod
+    def post(cls):
+        user_json = request.get_json()
+        '''
+        Getting data straight from JSON (not using schema) 
+        to get the data as the raw password is needed for comparison.
+        '''
+        email = user_json['email']
+        password = user_json['password']
+
+        user = UserModel.find_by_email(email)
+
+        if user and user.check_password(password):
+            confirmation = user.most_recent_confirmation
+            if confirmation and confirmation.confirmed:
+                access_token = create_access_token(identity=user.id, fresh=True)
+                refresh_token = create_refresh_token(user.id)
+
+                # Store the tokens in redis with a status of not currently revoked. We
+                # can use the `get_jti()` method to get the unique identifier string for
+                # each token. We can also set an expires time on these tokens in redis,
+                # so they will get automatically removed after they expire. We will set
+                # everything to be automatically removed shortly after the token expires
+                access_jti = get_jti(encoded_token=access_token)
+                refresh_jti = get_jti(encoded_token=refresh_token)
+                print("ACCESS JTI = {}".format(access_jti))
+                print("REFRESH JTI = {}".format(refresh_jti))
+                revoked_store.set(access_jti, 'false', ACCESS_EXPIRES * 1.2)
+                revoked_store.set(refresh_jti, 'false', REFRESH_EXPIRES * 1.2)
+
+                return {"access_token": access_token, "refresh_token": refresh_token}, 200
+            return {"message": NOT_CONFIRMED.format(user.email)}, 400
+
+        return {"message": USER_INVALID_CREDENTIALS}, 401
