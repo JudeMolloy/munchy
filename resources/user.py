@@ -13,6 +13,8 @@ from flask_jwt_extended import (
     get_raw_jwt,
     get_jti,
 )
+
+from forms.admin import AdminLoginForm
 from libs.mailgun import MailgunException
 from blacklist import ACCESS_EXPIRES, REFRESH_EXPIRES, revoked_store
 from models.user import UserModel
@@ -147,8 +149,9 @@ class TokenRefresh(Resource):
 class AdminLogin(Resource):
     @classmethod
     def get(cls):
+        form = AdminLoginForm()
         headers = {"Content-Type": "text/html"}
-        return make_response(render_template("admin-login.html"), 200, headers)
+        return make_response(render_template("admin-login.html", form=form), 200, headers)
 
     @classmethod
     def post(cls):

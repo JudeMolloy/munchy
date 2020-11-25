@@ -4,18 +4,12 @@ from flask_jwt_extended import (
     fresh_jwt_required,
     jwt_required,
 )
-from app import admin_required
+
+from admin import admin_required
 
 from models.restaurant import RestaurantModel, TagModel
 
 NOT_FOUND = "Restaurant not found."
-
-
-class AdminLogin(Resource):
-    @classmethod
-    def get(cls):
-        headers = {"Content-Type": "text/html"}
-        return make_response(render_template("admin-login.html"), 200, headers)
 
 
 class AdminHome(Resource):
