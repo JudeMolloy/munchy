@@ -1,6 +1,6 @@
 import traceback
 
-from flask import request, make_response, render_template
+from flask import request, make_response, render_template, jsonify
 from flask_restful import Resource
 from flask_jwt_extended import (
     create_access_token,
@@ -11,7 +11,8 @@ from flask_jwt_extended import (
     jwt_refresh_token_required,
     fresh_jwt_required,
     get_raw_jwt,
-    get_jti,
+    get_jti, set_access_cookies,
+    set_refresh_cookies, unset_jwt_cookies, get_csrf_token,
 )
 
 from forms.admin import AdminLoginForm
@@ -151,17 +152,12 @@ class AdminLogin(Resource):
     def get(cls):
         form = AdminLoginForm()
         headers = {"Content-Type": "text/html"}
-        return make_response(render_template("admin-login.html", form=form), 200, headers)
+        return make_response(render_template("admin-login.html", csrf_token=(get_raw_jwt() or {}).get("csrf"), form=form), 200, headers)
 
     @classmethod
     def post(cls):
-        user_json = request.get_json()
-        '''
-        Getting data straight from JSON (not using schema) 
-        to get the data as the raw password is needed for comparison.
-        '''
-        email = user_json['email']
-        password = user_json['password']
+        email = request.form['email']
+        password = request.form['password']
 
         user = UserModel.find_by_email(email)
 
@@ -183,7 +179,38 @@ class AdminLogin(Resource):
                 revoked_store.set(access_jti, 'false', ACCESS_EXPIRES * 1.2)
                 revoked_store.set(refresh_jti, 'false', REFRESH_EXPIRES * 1.2)
 
-                return {"access_token": access_token, "refresh_token": refresh_token}, 200
+                # Sets the cookies in the browser.
+                resp = jsonify({
+                    'access_csrf': get_csrf_token(access_token),
+                    'refresh_csrf': get_csrf_token(refresh_token)
+                })
+                set_access_cookies(resp, access_token)
+                set_refresh_cookies(resp, refresh_token)
+                return resp, 200
+
             return {"message": NOT_CONFIRMED.format(user.email)}, 400
 
         return {"message": USER_INVALID_CREDENTIALS}, 401
+
+
+class AdminTokenRefresh(Resource):
+    @classmethod
+    def post(cls):
+        # Create the new access token
+        current_user = get_jwt_identity()
+        access_token = create_access_token(identity=current_user, fresh=False)
+
+        # Set the access JWT and CSRF double submit protection cookies
+        # in this response
+        resp = jsonify({'refresh': True})
+        set_access_cookies(resp, access_token)
+        return resp, 200
+
+
+class AdminRevokeToken(Resource):
+    @classmethod
+    def post(cls):
+        resp = jsonify({'logout': True})
+        unset_jwt_cookies(resp)
+        return resp, 200
+

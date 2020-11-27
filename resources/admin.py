@@ -2,7 +2,7 @@ from flask import request, make_response, render_template
 from flask_restful import Resource
 from flask_jwt_extended import (
     fresh_jwt_required,
-    jwt_required,
+    jwt_required, get_raw_jwt,
 )
 
 from admin import admin_required
@@ -17,9 +17,8 @@ class AdminHome(Resource):
     @fresh_jwt_required
     @classmethod
     def get(cls):
-
         headers = {"Content-Type": "text/html"}
-        return make_response(render_template("confirmation.html", email=confirmation.user.email), 200, headers)
+        return make_response(render_template("admin.html"), 200, headers)
 
 
 class AdminRestaurant(Resource):
