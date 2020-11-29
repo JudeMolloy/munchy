@@ -1,6 +1,6 @@
 import traceback
 
-from flask import request, make_response, render_template, jsonify
+from flask import request, make_response, render_template, jsonify, url_for
 from flask_restful import Resource
 from flask_jwt_extended import (
     create_access_token,
@@ -14,6 +14,7 @@ from flask_jwt_extended import (
     get_jti, set_access_cookies,
     set_refresh_cookies, unset_jwt_cookies, get_csrf_token,
 )
+from werkzeug.utils import redirect
 
 from forms.admin import AdminLoginForm
 from libs.mailgun import MailgunException
@@ -180,14 +181,10 @@ class AdminLogin(Resource):
                 revoked_store.set(refresh_jti, 'false', REFRESH_EXPIRES * 1.2)
 
                 # Sets the cookies in the browser.
-                resp = jsonify({
-                    'access_csrf': get_csrf_token(access_token),
-                    'refresh_csrf': get_csrf_token(refresh_token)
-                })
+                resp = jsonify({'login': True})
                 set_access_cookies(resp, access_token)
                 set_refresh_cookies(resp, refresh_token)
-                return resp, 200
-
+                return {'login': True}, 200
             return {"message": NOT_CONFIRMED.format(user.email)}, 400
 
         return {"message": USER_INVALID_CREDENTIALS}, 401
@@ -204,7 +201,7 @@ class AdminTokenRefresh(Resource):
         # in this response
         resp = jsonify({'refresh': True})
         set_access_cookies(resp, access_token)
-        return resp, 200
+        return {'refresh': True}, 200
 
 
 class AdminRevokeToken(Resource):

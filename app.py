@@ -117,10 +117,10 @@ api.add_resource(UserDelete, "/user-delete")
 api.add_resource(TokenRefresh, "/token-refresh")
 api.add_resource(Confirmation, "/user-confirmation/<string:confirmation_id>")
 
+api.add_resource(AdminHome, "/admin")
 api.add_resource(AdminLogin, "/admin/login")
 api.add_resource(AdminTokenRefresh, "/admin/token-refresh")
 api.add_resource(AdminRevokeToken, "/admin/token-revoke")
-api.add_resource(AdminHome)
 
 # Possibly just change to resend confirmation. Get rid of get method for testing.
 api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")

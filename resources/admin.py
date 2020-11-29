@@ -13,8 +13,8 @@ NOT_FOUND = "Restaurant not found."
 
 
 class AdminHome(Resource):
-    @admin_required
     @fresh_jwt_required
+    @admin_required
     @classmethod
     def get(cls):
         headers = {"Content-Type": "text/html"}
