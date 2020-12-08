@@ -1,12 +1,7 @@
-import os
-import json
-from functools import wraps
-
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify
 from flask_restful import Api
-from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_jwt_claims
+from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
-from werkzeug.utils import redirect
 
 from blacklist import revoked_store
 
@@ -25,6 +20,7 @@ from resources.user import (
 )
 from resources.confirmation import Confirmation, ConfirmationByUser
 from resources.admin import AdminHome, AdminRestaurant
+from resources.upload import Upload
 
 app = Flask(__name__)
 
@@ -33,7 +29,7 @@ api = Api(app)
 jwt = JWTManager(app)
 
 # List of user_id's for admin users.
-ADMIN_IDENTITIES = [1,]
+ADMIN_IDENTITIES = [1, ]
 
 EXPIRED_TOKEN = "The token has expired."
 INVALID_TOKEN = "The token is invalid."
@@ -122,31 +118,17 @@ api.add_resource(AdminLogin, "/admin/login")
 api.add_resource(AdminTokenRefresh, "/admin/token-refresh")
 api.add_resource(AdminRevokeToken, "/admin/token-revoke")
 
+api.add_resource(Upload, "/upload")
+
 # Possibly just change to resend confirmation. Get rid of get method for testing.
 api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
 
-
 # Admin
-
+app.config.from_object("config.DevelopmentConfig")
+db.init_app(app)
+ma.init_app(app)
 
 # Registers the db and marshmallow with the app .
 if __name__ == "__main__":
     app.config.from_object("config.DevelopmentConfig")  # Can change this to production or testing.
-    db.init_app(app)
-    ma.init_app(app)
     app.run(port=5000, debug=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
