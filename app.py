@@ -21,6 +21,7 @@ from resources.user import (
 from resources.confirmation import Confirmation, ConfirmationByUser
 from resources.admin import AdminHome, AdminRestaurant
 from resources.upload import Upload
+from resources.feed import Restaurants
 
 app = Flask(__name__)
 
@@ -122,6 +123,9 @@ api.add_resource(Upload, "/upload")
 
 # Possibly just change to resend confirmation. Get rid of get method for testing.
 api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
+api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
+
+api.add_resource(Restaurants, "/restaurants")
 
 # Admin
 app.config.from_object("config.DevelopmentConfig")
