@@ -19,6 +19,8 @@ requests = "*"
 flask-uploads = "*"
 flask-wtf = "*"
 wtforms = "*"
+gunicorn = "*"
+boto3 = "*"
 
 [requires]
 python_version = "3.8"
