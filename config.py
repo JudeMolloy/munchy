@@ -26,6 +26,7 @@ class Config(object):
     JWT_COOKIE_CSRF_PROTECT = True
     JWT_TOKEN_LOCATION = ['headers', 'cookies']
 
+
     # Allows JWT cookies to work with HTML forms.
     JWT_CSRF_CHECK_FORM = True
 
@@ -40,8 +41,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    # Gmail API worsk without SSL.
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 
 
 class TestingConfig(Config):
