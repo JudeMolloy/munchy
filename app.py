@@ -123,7 +123,6 @@ api.add_resource(Upload, "/upload")
 
 # Possibly just change to resend confirmation. Get rid of get method for testing.
 api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
-api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
 
 api.add_resource(Restaurants, "/restaurants")
 
