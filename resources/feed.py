@@ -4,7 +4,7 @@ from flask_restful import Resource
 class Restaurants(Resource):
     @classmethod
     def get(cls):
-        return { 'restaurants': [
+        return [
             { 
                 'id': 1, 
                 'name': 'Restaurant name',
@@ -33,4 +33,4 @@ class Restaurants(Resource):
                     }
                 ]
             }
-        ] }
+        ]
