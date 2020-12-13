@@ -1,7 +1,9 @@
+# Requires Redis server to be running.
 import redis
 
 from datetime import timedelta
 
+# Values can be changed.
 ACCESS_EXPIRES = timedelta(minutes=15)
 REFRESH_EXPIRES = timedelta(days=30)
 

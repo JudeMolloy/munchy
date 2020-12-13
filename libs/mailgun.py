@@ -18,7 +18,7 @@ class Mailgun:
     MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
 
     FROM_TITLE = "Munchy"
-    FROM_EMAIL = "mailgun@sandboxfed5b8a55a914ec393f8065fc7b34b04.mailgun.org"
+    FROM_EMAIL = os.environ.get("MAILGUN_FROM_EMAIL")
 
     @classmethod
     def send_email(cls, email: List[str], subject: str, text: str, html: str):

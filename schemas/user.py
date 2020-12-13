@@ -19,3 +19,4 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         return user
 
 
+

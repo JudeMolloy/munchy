@@ -10,6 +10,7 @@ from schemas.confirmation import ConfirmationSchema
 
 confirmation_schema = ConfirmationSchema()
 
+# Possibly should store in external file?
 NOT_FOUND = "Confirmation link is invalid."
 EXPIRED = "Confirmation link has expired."
 ALREADY_CONFIRMED = "Account has already been confirmed."

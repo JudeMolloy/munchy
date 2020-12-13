@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
 # Keeps the naming conventions the same for Alembic no matter the database. Solves some errors with migrations.
+# Should be less problems when using PostgreSQL
 convention = {
     "ix": 'ix_%(column_0_label)s',
     "uq": "uq_%(table_name)s_%(column_0_name)s",

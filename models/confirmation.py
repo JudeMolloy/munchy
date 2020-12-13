@@ -2,7 +2,7 @@ from db import db
 from uuid import uuid4
 from time import time
 
-CONFIRMATION_EXPIRATION_DELTA = 1800  # 30 minutes
+CONFIRMATION_EXPIRATION_DELTA = 1800  # 30 minutes (in seconds).
 
 
 class ConfirmationModel(db.Model):
