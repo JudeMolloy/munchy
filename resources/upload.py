@@ -26,10 +26,11 @@ class Upload(Resource):
         if img:
             filename = secure_filename(img.filename)
             img.save(filename)
+            key = "assets01/" + filename # Will upload into specific folder.
             s3.upload_file(
                 Bucket=BUCKET_NAME,
                 Filename=filename,
-                Key=filename
+                Key=key
             )
             # Remove the file from the local file system after uploading to s3.
             os.remove(filename)
