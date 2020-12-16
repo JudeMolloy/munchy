@@ -1,5 +1,5 @@
 from ma import ma
-from marshmallow import pre_dump, fields
+from marshmallow import pre_dump, fields, EXCLUDE
 from models.restaurant import RestaurantModel
 from schemas.tag import TagSchema
 
@@ -11,10 +11,15 @@ class RestaurantSchema(ma.SQLAlchemyAutoSchema):
         dump_only = ("id", "tags")
         load_instance = True
 
-    tags = fields.Nested(TagSchema)
+        # Excludes unknown files which is an
+        # error that is raised because tags is
+        # passed in on input even though it is dump only.
+        unknown = EXCLUDE
 
-    @pre_dump
-    def _pre_dump(self, restaurant: RestaurantModel, **kwargs):
-        self.tags = restaurant.get_tags
-        return restaurant
+    tags = fields.Nested(TagSchema, many=True)
+
+    #@pre_dump
+    #def _pre_dump(self, restaurant: RestaurantModel, **kwargs):
+        #self.tags = restaurant.get_tags
+        #return restaurant
 

@@ -38,6 +38,7 @@ class RestaurantModel(db.Model):
 
     @property
     def get_tags(self):
+        print(self.tags)
         return self.tags.all()
 
     @property
@@ -71,8 +72,9 @@ class TagModel(db.Model):
     restaurants = db.relationship("RestaurantModel", secondary=restaurant_tag,
                                   back_populates="tags")
 
-    def __init__(self, name):
+    def __init__(self, name, icon):
         self.name = name
+        self.icon = icon
 
     @property
     def get_restaurants(self):
