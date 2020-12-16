@@ -45,7 +45,7 @@ class Upload(Resource):
             )
             # Remove the file from the local file system after uploading to s3.
             os.remove(unique_filename)
-            # Generates the link to the cdn which the frontend can usses to pull the on demand video.
+            # Generates the link to the cdn which the frontend can uses to pull the on demand video.
             cdn_link = "https://d11rse4z1ry9t6.cloudfront.net/" + unique_name + "/AppleHLS1/" + m3u8_filename
             print(cdn_link)
             return make_response(render_template("upload-success.html", response="successful"))

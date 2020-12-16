@@ -22,6 +22,7 @@ from resources.confirmation import Confirmation, ConfirmationByUser
 from resources.admin import AdminHome, AdminRestaurant
 from resources.upload import Upload
 from resources.feed import Restaurants
+from resources.restaurant import Restaurant, AddRestaurant
 
 app = Flask(__name__)
 
@@ -120,6 +121,10 @@ api.add_resource(AdminTokenRefresh, "/admin/token-refresh")
 api.add_resource(AdminRevokeToken, "/admin/token-revoke")
 
 api.add_resource(Upload, "/upload")
+
+# Restaurant resources.
+api.add_resource(Restaurant, "/restaurant/<int:restaurant_id>")
+api.add_resource(AddRestaurant, "/add-restaurant")
 
 # Possibly just change to resend confirmation. Get rid of get method for testing.
 api.add_resource(ConfirmationByUser, "/confirmation/user/<int:user_id>")
