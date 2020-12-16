@@ -13,7 +13,7 @@ class Restaurants(Resource):
                     {
                         'id': 1,
                         'thumbnail_url': '',
-                        'video_url': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                        'video_url': 'https://d11rse4z1ry9t6.cloudfront.net/cf227cf8-520a-40ca-98ab-7d1dff4545e9/AppleHLS1/Figos_Burger_Trim.m3u8',
                         'title': 'Clip title',
                         'description': 'lorem ipsum dolem amet #food #seafood'
                     },
