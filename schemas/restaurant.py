@@ -2,6 +2,7 @@ from ma import ma
 from marshmallow import pre_dump, fields, EXCLUDE
 from models.restaurant import RestaurantModel
 from schemas.tag import TagSchema
+from schemas.clip import ClipSchema
 
 
 class RestaurantSchema(ma.SQLAlchemyAutoSchema):
@@ -17,9 +18,5 @@ class RestaurantSchema(ma.SQLAlchemyAutoSchema):
         unknown = EXCLUDE
 
     tags = fields.Nested(TagSchema, many=True)
-
-    #@pre_dump
-    #def _pre_dump(self, restaurant: RestaurantModel, **kwargs):
-        #self.tags = restaurant.get_tags
-        #return restaurant
+    clips = fields.Nested(ClipSchema, many=True)
 

@@ -59,3 +59,4 @@ class AddTag(Resource):
             traceback.print_exc()
             tag.delete_from_db()
             return {"message": TAG_CREATION_FAILED}, 500
+
