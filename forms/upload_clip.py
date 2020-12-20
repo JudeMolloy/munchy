@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired
 from models.restaurant import RestaurantModel
 
 def selectable_restaurants():
-    return RestaurantModel.query.all
+    return RestaurantModel.query.all()
 
 class UploadClipForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
