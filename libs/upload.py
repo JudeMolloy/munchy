@@ -31,7 +31,7 @@ def upload_to_vod_bucket(video):
 
     key = "assets01/" + unique_filename  # Uploads into specific folder to trigger the AWS Lambda function.
     s3.upload_file(
-        Bucket=VOD_SOURCE_BUCKET_NAME,
+        Bucket=str(VOD_SOURCE_BUCKET_NAME),
         Filename=unique_filename,
         Key=key
     )
