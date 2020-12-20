@@ -10,16 +10,18 @@ restaurant_schema = RestaurantSchema()
 RESTAURANT_NOT_FOUND = "Restaurant not found."
 RESTAURANT_CREATED_SUCCESSFULLY = "Restaurant has been created successfully."
 CREATION_FAILED = "Failed to create restaurant."
+RESTAURANTS_FETCH_FAILED = "Failed to fetch restaurants."
 
 TAG_NOT_FOUND = "Tag not found."
 
+
 class Restaurant(Resource):
     @classmethod
-    #@jwt_required
+    # @jwt_required
     def get(cls, restaurant_id: int):
         restaurant = RestaurantModel.find_by_id(restaurant_id)
         if not restaurant:
-            return {"message":RESTAURANT_NOT_FOUND}, 404
+            return {"message": RESTAURANT_NOT_FOUND}, 404
 
         return restaurant_schema.dump(restaurant), 200
 
@@ -54,3 +56,20 @@ class AddRestaurant(Resource):
             restaurant.delete_from_db()
             return {"message": CREATION_FAILED}, 500
 
+
+class Restaurants(Resource):
+    @classmethod
+    def get(cls):
+        restaurants = RestaurantModel.query.all()
+        try:
+            return (
+                {
+                    "restaurants": [
+                        restaurant_schema.dump(restaurant)
+                        for restaurant in restaurants
+                    ]
+                },
+                200
+            )
+        except:
+            return {"message": RESTAURANTS_FETCH_FAILED}, 500
