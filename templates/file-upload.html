@@ -1,6 +1,24 @@
 <form action="/upload" method="post" enctype="multipart/form-data">
-     <p class="card-text">Select a file to upload.</p>
+    {{ form.hidden_tag() }}
+    <p class="card-text">Select a file to upload.</p>
         <input type="file" name="file" value="file">
         <hr>
-   <input type="submit" name="upload" value="Upload" class="btn btn-success">
+    <p>
+        {{ form.title.label }}<br>
+        {{ form.title(size=32) }}<br>
+        {% for error in form.title.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.description.label }}<br>
+        {{ form.description(size=32) }}<br>
+        {% for error in form.description.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.restaurants }}
+    </p>
+    <p>{{ form.submit() }}</p>
 </form>

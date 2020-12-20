@@ -36,6 +36,9 @@ class RestaurantModel(db.Model):
         self.name = name
         self.bio = bio
 
+    def __repr__(self):
+        return self.name
+
     @property
     def get_tags(self):
         print(self.tags)
@@ -108,8 +111,7 @@ class ClipModel(db.Model):
     restaurants = db.relationship("RestaurantModel", secondary=restaurant_clip,
                                   back_populates="clips")
 
-    def __init__(self, name, title, description, video_url):
-        self.name = name
+    def __init__(self, title, description, video_url):
         self.title = title
         self.description = description
         self.video_url = video_url
