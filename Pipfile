@@ -21,6 +21,7 @@ flask-wtf = "*"
 wtforms = "*"
 gunicorn = "*"
 boto3 = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.8"
