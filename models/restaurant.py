@@ -36,10 +36,11 @@ class RestaurantModel(db.Model):
     clips = db.relationship("ClipModel", secondary=restaurant_clip,
                             back_populates="restaurants")
 
-    def __init__(self, name, bio, location):
+    def __init__(self, name, bio, latitude, longitude):
         self.name = name
         self.bio = bio
-        self.location = location
+        self.latitude = latitude
+        self.longitude = longitude
 
     def __repr__(self):
         return self.name

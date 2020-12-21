@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
+from flask_migrate import Migrate
 
 from blacklist import revoked_store
 
@@ -23,6 +24,8 @@ from resources.admin import AdminHome, AdminRestaurant, AddTag, UploadClip
 from resources.restaurant import Restaurant, AddRestaurant, Restaurants
 
 app = Flask(__name__)
+
+migrate = Migrate(app, db)
 
 api = Api(app)
 

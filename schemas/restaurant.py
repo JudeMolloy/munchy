@@ -9,7 +9,7 @@ class RestaurantSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = RestaurantModel
         #load_only = ("name", "bio")
-        dump_only = ("id", "tags", "")
+        dump_only = ("id", "tags", "clips", "relevance")
         load_instance = True
 
         # Excludes unknown files which is an

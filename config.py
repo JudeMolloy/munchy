@@ -36,8 +36,7 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    DATABASE_URI = 'mysql://user@localhost/foo'  # Production URI
-
+    pass
 
 class DevelopmentConfig(Config):
     DEBUG = True
