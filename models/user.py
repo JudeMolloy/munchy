@@ -15,15 +15,10 @@ class UserModel(db.Model):
 
     # Delete orphan only works for PostgreSQL?
     confirmations = db.relationship("ConfirmationModel", lazy="dynamic", cascade="all, delete-orphan")
-    #items = db.relationship("ItemModel", lazy="dynamic", cascade="all, delete-orphan")
 
     def __init__(self, email, password):
         self.email = email
         self.password = generate_password_hash(password)
-
-    #@property
-    #def get_items(self):
-        #return self.items.all()
 
     @property
     def most_recent_confirmation(self):

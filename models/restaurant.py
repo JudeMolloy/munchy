@@ -25,6 +25,10 @@ class RestaurantModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, index=True)
     bio = db.Column(db.String)
+    longitude = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+
+    relevance = db.relationship('RelevanceModel', backref='restaurants', lazy="dynamic", cascade="all, delete-orphan")
 
     tags = db.relationship("TagModel", secondary=restaurant_tag,
                            back_populates="restaurants")
@@ -32,9 +36,10 @@ class RestaurantModel(db.Model):
     clips = db.relationship("ClipModel", secondary=restaurant_clip,
                             back_populates="restaurants")
 
-    def __init__(self, name, bio):
+    def __init__(self, name, bio, location):
         self.name = name
         self.bio = bio
+        self.location = location
 
     def __repr__(self):
         return self.name
