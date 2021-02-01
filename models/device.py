@@ -1,6 +1,6 @@
 from db import db
 
-
+'''
 class DeviceModel(db.Model):
     __tablename__ = "devices"
 
@@ -12,3 +12,4 @@ class DeviceModel(db.Model):
     # Link to UserModel.
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     user = db.relationship("UserModel")
+'''

@@ -74,7 +74,7 @@ class ConfirmationByUser(Resource):
             if confirmation:
                 if confirmation.confirmed:
                     return {"message": ALREADY_CONFIRMED}, 400
-                confirmation.force_to_expire()
+                confirmation.force_expire()
 
             new_confirmation = ConfirmationModel(user_id)
             new_confirmation.save_to_db()

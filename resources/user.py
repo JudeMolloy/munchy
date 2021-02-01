@@ -13,6 +13,7 @@ from flask_jwt_extended import (
     get_raw_jwt,
     get_jti, set_access_cookies,
     set_refresh_cookies, unset_jwt_cookies, get_csrf_token,
+    jwt_optional
 )
 from werkzeug.utils import redirect
 

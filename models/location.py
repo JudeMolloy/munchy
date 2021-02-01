@@ -7,6 +7,6 @@ class LocationModel(db.Model):
     longitude = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
 
-    # Link to DeviceModel.
-    device_id = db.Column(db.Integer, db.ForeignKey("devices.id"), nullable=False)
-    device = db.relationship("DeviceModel")
+    # Link to UserModel.
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("UserModel")

@@ -49,6 +49,13 @@ class AdminRestaurant(Resource):
         return make_response(render_template("admin-restaurant.html", restaurant=restaurant), 200, headers)
 
 
+class AddRestaurant(Resource):
+    @classmethod
+    def post(cls):
+        form = AddRestaurantForm()
+        return make_response(render_template("file-upload.html", form=form))
+
+
 class AddTag(Resource):
     @classmethod
     def post(cls):

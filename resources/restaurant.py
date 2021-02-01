@@ -1,8 +1,11 @@
 import traceback
 
 from flask import request, make_response, render_template, jsonify, url_for
+from flask_jwt_extended import get_jwt_identity, jwt_required, jwt_optional
 from flask_restful import Resource
 from models.restaurant import RestaurantModel, TagModel
+from models.user import UserModel
+from models.relevance import RelevanceModel
 from schemas.restaurant import RestaurantSchema
 
 restaurant_schema = RestaurantSchema()
@@ -59,8 +62,24 @@ class AddRestaurant(Resource):
 
 class Restaurants(Resource):
     @classmethod
+    @jwt_optional
     def get(cls):
-        restaurants = RestaurantModel.query.all()
+        # Find the current user. Users can only delete their own account.
+        current_user_id = get_jwt_identity()
+
+        if current_user_id is not None:
+            current_user = UserModel.find_by_id(current_user_id)
+
+            # Will need to add in a filter for location.
+            associated_relevance_ratings = current_user.relevances.order_by(RelevanceModel.rating.desc()).all()
+
+            restaurants = []
+            for relevance_rating in associated_relevance_ratings:
+                restaurants.append(relevance_rating.restaurant)
+
+        else:
+            restaurants = RestaurantModel.query.all()
+
         try:
             return (
                 {

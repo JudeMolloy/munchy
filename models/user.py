@@ -15,6 +15,9 @@ class UserModel(db.Model):
 
     # Delete orphan only works for PostgreSQL?
     confirmations = db.relationship("ConfirmationModel", lazy="dynamic", cascade="all, delete-orphan")
+    relevances = db.relationship('RelevanceModel', backref='devices', lazy="dynamic", cascade="all, delete-orphan", order_by="desc(RelevanceModel.rating)", primaryjoin="RelevanceModel.user_id==UserModel.id")
+    locations = db.relationship('LocationModel', backref='devices', lazy="dynamic", cascade="all, delete-orphan")
+
 
     def __init__(self, email, password):
         self.email = email
