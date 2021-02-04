@@ -1,0 +1,41 @@
+<form action="/admin/add-restaurant" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <p class="card-text">Select a file to upload.</p>
+        <input type="file" name="file" value="file">
+        <hr>
+    <p>
+        {{ form.name.label }}<br>
+        {{ form.name(size=32) }}<br>
+        {% for error in form.name.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.bio.label }}<br>
+        {{ form.bio }}<br>
+        {% for error in form.bio.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.longitude.label }}<br>
+        {{ form.longitude }}<br>
+        {% for error in form.longitude.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.latitude.label }}<br>
+        {{ form.latitude }}<br>
+        {% for error in form.latitude.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.tags }}
+    </p>
+    <p>
+        {{ form.clips }}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>

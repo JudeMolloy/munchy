@@ -20,7 +20,7 @@ from resources.user import (
     AdminTokenRefresh,
 )
 from resources.confirmation import Confirmation, ConfirmationByUser
-from resources.admin import AdminHome, AdminRestaurant, AddTag, UploadClip
+from resources.admin import AdminHome, AdminRestaurant, AddTag, UploadClip, AdminAddRestaurant
 from resources.restaurant import Restaurant, AddRestaurant, Restaurants
 from resources.relevance import UpdateRelevance
 
@@ -122,6 +122,7 @@ api.add_resource(AdminLogin, "/admin/login")
 api.add_resource(AdminTokenRefresh, "/admin/token-refresh")
 api.add_resource(AdminRevokeToken, "/admin/token-revoke")
 api.add_resource(AddTag, "/admin/add-tag")
+api.add_resource(AdminAddRestaurant, "/admin/add-restaurant")
 
 api.add_resource(UploadClip, "/upload")
 
