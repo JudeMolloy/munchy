@@ -23,6 +23,7 @@ gunicorn = "*"
 boto3 = "*"
 psycopg2-binary = "*"
 flask-migrate = "*"
+flask_admin = "*"
 
 [requires]
 python_version = "3.8"
