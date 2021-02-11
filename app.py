@@ -3,11 +3,20 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
 from flask_migrate import Migrate
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 
 from blacklist import revoked_store
 
 from db import db
 from ma import ma
+
+from models.user import UserModel
+from models.data import ClipDataModel
+from models.restaurant import RestaurantModel, ClipModel, TagModel
+from models.relevance import RelevanceModel
+from models.confirmation import ConfirmationModel
+
 from resources.user import (
     UserRegister,
     User,
@@ -31,6 +40,16 @@ migrate = Migrate(app, db)
 api = Api(app)
 
 jwt = JWTManager(app)
+
+# Admin stuff
+admin = Admin(app, name='Munchy', template_mode='bootstrap3')
+admin.add_view(ModelView(UserModel, db.session))
+admin.add_view(ModelView(ClipDataModel, db.session))
+admin.add_view(ModelView(RestaurantModel, db.session))
+admin.add_view(ModelView(ClipModel, db.session))
+admin.add_view(ModelView(TagModel, db.session))
+admin.add_view(ModelView(RelevanceModel, db.session))
+admin.add_view(ModelView(ConfirmationModel, db.session))
 
 # List of user_id's for admin users.
 ADMIN_IDENTITIES = [1, ]
@@ -117,7 +136,7 @@ api.add_resource(UserDelete, "/user-delete")
 api.add_resource(TokenRefresh, "/token-refresh")
 api.add_resource(Confirmation, "/user-confirmation/<string:confirmation_id>")
 
-api.add_resource(AdminHome, "/admin")
+api.add_resource(AdminHome, "/admin2")
 api.add_resource(AdminLogin, "/admin/login")
 api.add_resource(AdminTokenRefresh, "/admin/token-refresh")
 api.add_resource(AdminRevokeToken, "/admin/token-revoke")
