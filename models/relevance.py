@@ -7,6 +7,10 @@ class RelevanceModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     rating = db.Column(db.Float, nullable=False, index=True)
 
+    # Data
+    favourite = db.Column(db.Boolean, default=False)
+    profile_views = db.Column(db.Integer, default=0)
+
     # Link to UserModel.
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     user = db.relationship("UserModel")
@@ -19,6 +23,9 @@ class RelevanceModel(db.Model):
         self.rating = rating
         self.user_id = user_id
         self.restaurant_id = restaurant_id
+
+    def increment_profile_views(self):
+        self.profile_views += 1
 
     def save_to_db(self):
         db.session.add(self)

@@ -122,6 +122,8 @@ class ClipModel(db.Model):
     restaurants = db.relationship("RestaurantModel", secondary=restaurant_clip,
                                   back_populates="clips")
 
+    clip_data = db.relationship('ClipDataModel', backref='clips', lazy="dynamic", cascade="all, delete-orphan")
+
     def __init__(self, title, description, video_url):
         self.title = title
         self.description = description
@@ -133,6 +135,22 @@ class ClipModel(db.Model):
     @property
     def get_restaurants(self):
         return self.restaurants.all()
+
+    @property
+    def get_views(self):
+        pass
+
+    @property
+    def get_likes(self):
+        pass
+
+    @property
+    def get_share_clicks(self):
+        pass
+
+    @property
+    def get_order_clicks(self):
+        pass
 
     @classmethod
     def find_by_id(cls, _id: int):

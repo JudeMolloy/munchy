@@ -12,7 +12,6 @@ def update_relevance(current_user_id):
     '''WILL NEED TO UPDATE THIS TO FIGURE OUT RADIUS FROM CURRENT LOCATION
        IT WILL SUFFICE FOR NOW TO JUST SET FOR ALL RESTAURANTS.'''
 
-    current_user = UserModel.find_by_id(current_user_id)
     restaurants = RestaurantModel.query.all()  # This is what needs to change.
 
     for restaurant in restaurants:

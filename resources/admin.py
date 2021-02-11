@@ -87,6 +87,7 @@ class AdminAddRestaurant(Resource):
         profile_image = request.files["file"]
 
         if profile_image:
+            # Maybe move this to the end of the function so if it fails we don't get loads of images added to aws for no reason.
             profile_image_url = upload_to_image_bucket(profile_image, AWS_PROFILE_IMAGES_FOLDER)
 
             # Add the data to the database.
