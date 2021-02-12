@@ -24,6 +24,7 @@ boto3 = "*"
 psycopg2-binary = "*"
 flask-migrate = "*"
 flask-admin = "*"
+flask-login = "*"
 
 [requires]
 python_version = "3.8"

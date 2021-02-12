@@ -32,7 +32,7 @@ class Config(object):
 
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'very-difficult-to-guess-key'
 
-    FLASK_ADMIN_SWATCH = 'cerulean'
+    FLASK_ADMIN_SWATCH = 'simplex'
 
 
 

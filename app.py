@@ -1,16 +1,21 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, url_for, flash, render_template
+from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
 from flask_migrate import Migrate
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
+from werkzeug.urls import url_parse
+from werkzeug.utils import redirect
 
 from blacklist import revoked_store
 
 from db import db
+from forms.admin import AdminLoginForm
 from ma import ma
 
+from models.admin import AdminUserModel
 from models.user import UserModel
 from models.data import ClipDataModel
 from models.restaurant import RestaurantModel, ClipModel, TagModel
@@ -41,15 +46,69 @@ api = Api(app)
 
 jwt = JWTManager(app)
 
-# Admin stuff
-admin = Admin(app, name='Munchy', template_mode='bootstrap3')
-admin.add_view(ModelView(UserModel, db.session))
-admin.add_view(ModelView(ClipDataModel, db.session))
-admin.add_view(ModelView(RestaurantModel, db.session))
-admin.add_view(ModelView(ClipModel, db.session))
-admin.add_view(ModelView(TagModel, db.session))
-admin.add_view(ModelView(RelevanceModel, db.session))
-admin.add_view(ModelView(ConfirmationModel, db.session))
+admin_login = LoginManager(app)
+admin_login.login_view = 'admin_login'
+
+# ADMIN STUFF HERE FOR EASE.
+class ProtectedAdminHomeView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('admin_login', next=request.url))
+
+    @expose('/')
+    def index(self):
+        return self.render('/admin/index.html')
+
+
+class AdminView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('admin_login', next=request.url))
+
+
+@admin_login.user_loader
+def load_user(id):
+    return AdminUserModel.query.get(int(id))
+
+
+@app.route('/admin-login', methods=['GET', 'POST'])
+def admin_login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = AdminLoginForm()
+    if form.validate_on_submit():
+        user = AdminUserModel.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect((url_for('admin_login')))
+        login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
+    return render_template('admin-login.html', title='Log In', form=form)
+
+
+@app.route('/admin-logout')
+def logout():
+    logout_user()
+    return redirect("https://munchy.fun")
+
+admin = Admin(app, name='Munchy', template_mode='bootstrap3', index_view=ProtectedAdminHomeView(url='/admin'))
+admin.add_view(AdminView(UserModel, db.session))
+admin.add_view(AdminView(ClipDataModel, db.session))
+admin.add_view(AdminView(RestaurantModel, db.session))
+admin.add_view(AdminView(ClipModel, db.session))
+admin.add_view(AdminView(TagModel, db.session))
+admin.add_view(AdminView(RelevanceModel, db.session))
+admin.add_view(AdminView(ConfirmationModel, db.session))
+
 
 # List of user_id's for admin users.
 ADMIN_IDENTITIES = [1, ]
@@ -136,12 +195,13 @@ api.add_resource(UserDelete, "/user-delete")
 api.add_resource(TokenRefresh, "/token-refresh")
 api.add_resource(Confirmation, "/user-confirmation/<string:confirmation_id>")
 
-api.add_resource(AdminHome, "/admin2")
-api.add_resource(AdminLogin, "/admin/login")
-api.add_resource(AdminTokenRefresh, "/admin/token-refresh")
-api.add_resource(AdminRevokeToken, "/admin/token-revoke")
-api.add_resource(AddTag, "/admin/add-tag")
-api.add_resource(AdminAddRestaurant, "/admin/add-restaurant")
+#api.add_resource(AdminHome, "/admin2")
+#api.add_resource(AdminLogin, "/admin/login")
+#api.add_resource(AdminTokenRefresh, "/admin/token-refresh")
+#api.add_resource(AdminRevokeToken, "/admin/token-revoke")
+
+#api.add_resource(AddTag, "/admin/add-tag")
+#api.add_resource(AdminAddRestaurant, "/admin/add-restaurant")
 
 api.add_resource(UploadClip, "/upload")
 

@@ -9,6 +9,7 @@ from flask_jwt_extended import (
     jwt_required, get_raw_jwt,
 )
 
+
 from admin import admin_required
 from forms.restaurant import RestaurantForm
 from models.restaurant import RestaurantModel, TagModel, ClipModel
