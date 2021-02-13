@@ -60,7 +60,7 @@ class ProtectedAdminHomeView(AdminIndexView):
 
     @expose('/')
     def index(self):
-        return self.render('/admin')
+        return self.render('/admin/index.html')
 
 
 class AdminView(ModelView):
@@ -90,7 +90,7 @@ def admin_login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
+            next_page = "/admin"
         return redirect(next_page)
     return render_template('admin-login.html', title='Log In', form=form)
 
