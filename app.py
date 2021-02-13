@@ -60,7 +60,7 @@ class ProtectedAdminHomeView(AdminIndexView):
 
     @expose('/')
     def index(self):
-        return self.render('/admin/index.html')
+        return self.render('/admin')
 
 
 class AdminView(ModelView):
