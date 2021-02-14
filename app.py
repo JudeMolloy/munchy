@@ -29,9 +29,6 @@ from resources.user import (
     TokenRefresh,
     UserLogout,
     UserDelete,
-    AdminLogin,
-    AdminRevokeToken,
-    AdminTokenRefresh,
 )
 from resources.confirmation import Confirmation, ConfirmationByUser
 from resources.admin import AdminHome, AdminRestaurant, AddTag, UploadClip, AdminAddRestaurant
