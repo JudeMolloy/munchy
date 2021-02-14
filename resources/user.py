@@ -90,10 +90,12 @@ class UserLogin(Resource):
 
         if user and user.check_password(password):
             confirmation = user.most_recent_confirmation
+            print("111111111111111111111111")
             if confirmation and confirmation.confirmed:
+                print("222222222222222222222222222")
                 access_token = create_access_token(identity=user.id, fresh=True)
                 refresh_token = create_refresh_token(user.id)
-
+                print("333333333333333333333333333333333333")
                 # Store the tokens in redis with a status of not currently revoked. We
                 # can use the `get_jti()` method to get the unique identifier string for
                 # each token. We can also set an expires time on these tokens in redis,
@@ -103,8 +105,10 @@ class UserLogin(Resource):
                 refresh_jti = get_jti(encoded_token=refresh_token)
                 print("ACCESS JTI = {}".format(access_jti))
                 print("REFRESH JTI = {}".format(refresh_jti))
+                print("4444444444444444444444444444444444444")
                 revoked_store.set(access_jti, 'false', ACCESS_EXPIRES * 1.2)
                 revoked_store.set(refresh_jti, 'false', REFRESH_EXPIRES * 1.2)
+                print("5555555555555555555555555555555555555555")
 
                 return {"access_token": access_token, "refresh_token": refresh_token}, 200
             return {"message": NOT_CONFIRMED.format(user.email)}, 400
@@ -148,7 +152,7 @@ class TokenRefresh(Resource):
         revoked_store.set(access_jti, 'false', ACCESS_EXPIRES * 1.2)
         return {"access_token": new_token}, 200
 
-
+"""
 class AdminLogin(Resource):
     @classmethod
     def get(cls):
@@ -211,4 +215,6 @@ class AdminRevokeToken(Resource):
         resp = jsonify({'logout': True})
         unset_jwt_cookies(resp)
         return resp, 200
+        
+"""
 
