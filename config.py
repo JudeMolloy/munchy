@@ -20,15 +20,15 @@ class Config(object):
     JWT_BLACKLIST_TOKEN_CHECKS = ["access", "refresh"]
 
     # Cookie config
-    JWT_COOKIE_SECURE = False
-    JWT_ACCESS_TOKEN_PATH = '/admin'
-    JWT_REFRESH_COOKIE_PATH = '/admin/token/refresh'
-    JWT_COOKIE_CSRF_PROTECT = True
-    JWT_TOKEN_LOCATION = ['headers', 'cookies']
+    #JWT_COOKIE_SECURE = False
+    #JWT_ACCESS_TOKEN_PATH = '/admin'
+    #JWT_REFRESH_COOKIE_PATH = '/admin/token/refresh'
+    #JWT_COOKIE_CSRF_PROTECT = True
+    #JWT_TOKEN_LOCATION = ['headers', 'cookies']
 
 
     # Allows JWT cookies to work with HTML forms.
-    JWT_CSRF_CHECK_FORM = True
+    #JWT_CSRF_CHECK_FORM = True
 
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'very-difficult-to-guess-key'
 
