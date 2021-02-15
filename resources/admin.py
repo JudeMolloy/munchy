@@ -114,11 +114,13 @@ class AddTag(Resource):
 
 class UploadClip(Resource):
     @classmethod
+    @login_required
     def get(cls):
         form = UploadClipForm()
         return make_response(render_template("file-upload.html", form=form))
 
     @classmethod
+    @login_required
     def post(cls):
         form_data = request.form.to_dict(flat=False)  # Converts data into dict of lists to avoid duplicate keys.
 
