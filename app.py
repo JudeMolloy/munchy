@@ -199,8 +199,7 @@ api.add_resource(Confirmation, "/user-confirmation/<string:confirmation_id>")
 
 api.add_resource(AddTag, "/admin/add-tag")
 api.add_resource(AdminAddRestaurant, "/admin/add-restaurant")
-
-api.add_resource(UploadClip, "/upload")
+api.add_resource(UploadClip, "/admin/upload")
 
 # Restaurant resources.
 api.add_resource(Restaurant, "/restaurant/<int:restaurant_id>")

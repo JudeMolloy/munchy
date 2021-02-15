@@ -1,5 +1,7 @@
 import os
 
+import redis
+
 from blacklist import ACCESS_EXPIRES, REFRESH_EXPIRES
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -35,14 +37,12 @@ class Config(object):
     FLASK_ADMIN_SWATCH = 'simplex'
 
 
-
-
 class ProductionConfig(Config):
     pass
 
+
 class DevelopmentConfig(Config):
     DEBUG = True
-
 
 
 class TestingConfig(Config):
