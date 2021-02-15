@@ -15,6 +15,4 @@ class RestaurantForm(FlaskForm):
     bio = StringField("Bio")
     longitude = FloatField("Longitude", validators=[DataRequired()])
     latitude = FloatField("Latitude", validators=[DataRequired()])
-    tags = QuerySelectMultipleField(query_factory=selectable_tags)
-    clips = QuerySelectMultipleField(query_factory=selectable_clips)
     submit = SubmitField("Submit")

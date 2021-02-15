@@ -197,7 +197,7 @@ api.add_resource(Confirmation, "/user-confirmation/<string:confirmation_id>")
 #api.add_resource(AdminTokenRefresh, "/admin/token-refresh")
 #api.add_resource(AdminRevokeToken, "/admin/token-revoke")
 
-api.add_resource(AddTag, "/admin/add-tag")
+#api.add_resource(AddTag, "/admin/add-tag")
 api.add_resource(AdminAddRestaurant, "/admin/add-restaurant")
 api.add_resource(UploadClip, "/admin/upload")
 

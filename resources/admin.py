@@ -3,6 +3,7 @@ import os
 import traceback
 
 from flask import request, make_response, render_template
+from flask_login import login_required
 from flask_restful import Resource
 from flask_jwt_extended import (
     fresh_jwt_required,
@@ -59,27 +60,15 @@ class AdminRestaurant(Resource):
 
 class AdminAddRestaurant(Resource):
     @classmethod
+    @login_required
     def get(cls):
         form = RestaurantForm()
         return make_response(render_template("restaurant-form.html", form=form))
 
     @classmethod
+    @login_required
     def post(cls):
         form_data = request.form.to_dict(flat=False)  # Converts data into dict of lists to avoid duplicate keys.
-
-        tags = []
-        clips = []
-
-        try:
-            tags = form_data['tags']
-        except(KeyError):
-            print("No tags selected.")
-
-        try:
-            clips = form_data['clips']
-        except(KeyError):
-            print("No clips selected.")
-
 
         name = request.form['name']
         bio = request.form['bio']
@@ -94,25 +83,6 @@ class AdminAddRestaurant(Resource):
             # Add the data to the database.
             restaurant = RestaurantModel(name=name, bio=bio, longitude=longitude, latitude=latitude, profile_image_url=profile_image_url)
 
-            for clip_id in clips:
-                try:
-                    clip = ClipModel.find_by_id(clip_id)
-                    # Possibly need to check that the clip doesn't already have the restaurant.
-                    if not clip:
-                        return {"message": CLIP_NOT_FOUND}, 404
-                    restaurant.clips.append(clip)
-                except:
-                    return {"message": RESTAURANT_ADD_FAILED}, 500
-
-            for tag_id in tags:
-                try:
-                    tag = TagModel.find_by_id(tag_id)
-                    # Possibly need to check that the clip doesn't already have the restaurant.
-                    if not tag:
-                        return {"message": TAG_NOT_FOUND}, 404
-                    restaurant.tags.append(tags)
-                except:
-                    return {"message": RESTAURANT_ADD_FAILED}, 500
 
             try:
                 restaurant.save_to_db()
