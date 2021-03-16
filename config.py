@@ -18,7 +18,7 @@ class Config(object):
     # JWT Configuration
     JWT_ACCESS_TOKEN_EXPIRES = ACCESS_EXPIRES
     JWT_REFRESH_TOKEN_EXPIRES = REFRESH_EXPIRES
-    JWT_BLACKLIST_ENABLED= True
+    JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ["access", "refresh"]
 
     # Cookie config

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, FloatField
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 from models.restaurant import TagModel, ClipModel
 
 def selectable_tags():
@@ -15,4 +15,9 @@ class RestaurantForm(FlaskForm):
     bio = StringField("Bio")
     longitude = FloatField("Longitude", validators=[DataRequired()])
     latitude = FloatField("Latitude", validators=[DataRequired()])
+
+    deliveroo_url = StringField("Deliveroo URL")
+    ubereats_url = StringField("Uber Eats URL")
+    justeat_url = StringField("Just Eat URL")
+
     submit = SubmitField("Submit")

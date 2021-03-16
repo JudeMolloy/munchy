@@ -1,8 +1,8 @@
 <form action="/admin/add-restaurant" method="post" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <p class="card-text">Select a file to upload.</p>
-        <input type="file" name="file" value="file">
-        <hr>
+    <input type="file" name="file" value="file">
+    <hr>
     <p>
         {{ form.name.label }}<br>
         {{ form.name(size=32) }}<br>
@@ -28,6 +28,27 @@
         {{ form.latitude.label }}<br>
         {{ form.latitude }}<br>
         {% for error in form.latitude.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.deliveroo_url.label }}<br>
+        {{ form.deliveroo_url }}<br>
+        {% for error in form.deliveroo_url.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.ubereats_url.label }}<br>
+        {{ form.ubereats_url }}<br>
+        {% for error in form.ubereats_url.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.justeat_url.label }}<br>
+        {{ form.justeat_url }}<br>
+        {% for error in form.justeat_url.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>

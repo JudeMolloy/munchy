@@ -29,6 +29,10 @@ class RestaurantModel(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     profile_image_url = db.Column(db.String)
 
+    deliveroo_url = db.Column(db.String, nullable=True, index=False, unique=False)
+    ubereats_url = db.Column(db.String, nullable=True, index=False, unique=False)
+    justeat_url = db.Column(db.String, nullable=True, index=False, unique=False)
+
     relevance = db.relationship('RelevanceModel', backref='restaurants', lazy="dynamic", cascade="all, delete-orphan")
 
     tags = db.relationship("TagModel", secondary=restaurant_tag,

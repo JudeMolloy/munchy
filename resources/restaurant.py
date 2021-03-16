@@ -92,3 +92,33 @@ class Restaurants(Resource):
             )
         except:
             return {"message": RESTAURANTS_FETCH_FAILED}, 500
+
+
+class ExploreRestaurants(Resource)
+    @classmethod
+    @jwt_optional
+    def get(cls):
+        restaurants = RestaurantModel.query
+
+        """
+        tag_filter = request.args.get('tag')
+        if tag_filter:
+            tag = TagModel.query.filter_by(name=tag_filter).first()
+
+            restaurants = restaurants.filter(Restaurant.tags.has(name=tag_filter))
+        """
+        
+        restaurants = restaurants.all()
+
+        try:
+            return (
+                {
+                    "restaurants": [
+                        restaurant_schema.dump(restaurant)
+                        for restaurant in restaurants
+                    ]
+                },
+                200
+            )
+        except:
+            return {"message": RESTAURANTS_FETCH_FAILED}, 500
