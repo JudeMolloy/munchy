@@ -16,9 +16,10 @@ from forms.restaurant import RestaurantForm
 from models.restaurant import RestaurantModel, TagModel, ClipModel
 from schemas.tag import TagSchema
 from forms.upload_clip import UploadClipForm
-from libs.upload import upload_to_vod_bucket, upload_to_image_bucket
+from libs.upload import upload_to_vod_bucket, upload_file_to_bucket
 
 AWS_PROFILE_IMAGES_FOLDER = os.environ.get("AWS_PROFILE_IMAGES_FOLDER")
+AWS_VIDEOS_FOLDER = os.environ.get("AWS_VIDEOS_FOLDER")
 
 RESTAURANT_NOT_FOUND = "Restaurant not found."
 CLIP_NOT_FOUND = "Clip not found."
@@ -78,7 +79,7 @@ class AdminAddRestaurant(Resource):
 
         if profile_image:
             # Maybe move this to the end of the function so if it fails we don't get loads of images added to aws for no reason.
-            profile_image_url = upload_to_image_bucket(profile_image, AWS_PROFILE_IMAGES_FOLDER)
+            profile_image_url = upload_file_to_bucket(profile_image, AWS_PROFILE_IMAGES_FOLDER)
 
             # Add the data to the database.
             restaurant = RestaurantModel(name=name, bio=bio, longitude=longitude, latitude=latitude, profile_image_url=profile_image_url)
@@ -136,7 +137,8 @@ class UploadClip(Resource):
         video = request.files["file"]
 
         if video:
-            video_url = upload_to_vod_bucket(video)
+            # CHANGE THIS TO UPLOAD TO upload_to_vod_bucket(video) IF WANT TO SWITCH BACK TO VOD.
+            video_url = upload_file_to_bucket(video, AWS_VIDEOS_FOLDER)
 
             # Add the data to the database.
             clip = ClipModel(title=title, description=description, video_url=video_url)

@@ -7,10 +7,10 @@ from werkzeug.utils import secure_filename
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 VOD_SOURCE_BUCKET_NAME = os.environ.get("VOD_SOURCE_BUCKET_NAME")
-AWS_IMAGES_BUCKET_NAME = os.environ.get("AWS_IMAGES_BUCKET_NAME")
+AWS_GENERAL_BUCKET_NAME = os.environ.get("AWS_GENERAL_BUCKET_NAME")
 
 CF_CDN_VOD = os.environ.get("CF_CDN_VOD")
-CF_CDN_IMG = os.environ.get("CF_CDN_IMG")
+CF_CDN_FILE = os.environ.get("CF_CDN_FILE")
 
 
 # Establish s3 client
@@ -50,9 +50,9 @@ def upload_to_vod_bucket(video):
 
 # Some repeated code. Could be pulled out into its own function.
 
-def upload_to_image_bucket(image, folder):
+def upload_file_to_bucket(file, folder):
     unique = str(uuid.uuid4())
-    split_name = image.filename.split(".")
+    split_name = file.filename.split(".")
     name = split_name[0]
     file_ext = split_name[1]
 
@@ -61,11 +61,11 @@ def upload_to_image_bucket(image, folder):
     unique_name = secure_filename(unique + "-" + name)  # Generates unique name.
     unique_filename = unique_name + "." + file_ext  # Generates image filename.
 
-    image.save(unique_filename)
+    file.save(unique_filename)
 
     key = folder + "/" + unique_filename  # Uploads into specific folder to trigger the AWS Lambda function.
     s3.upload_file(
-        Bucket=str(AWS_IMAGES_BUCKET_NAME),
+        Bucket=str(AWS_GENERAL_BUCKET_NAME),
         Filename=unique_filename,
         Key=key
     )
@@ -73,6 +73,6 @@ def upload_to_image_bucket(image, folder):
     # Remove the file from the local file system after uploading to s3.
     os.remove(unique_filename)
     # Generates the link to the cdn which the frontend can uses to pull the on demand video.
-    cdn_link = str(CF_CDN_IMG) + key
+    cdn_link = str(CF_CDN_FILE) + key
 
     return cdn_link

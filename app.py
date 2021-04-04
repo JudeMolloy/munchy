@@ -187,7 +187,7 @@ def revoked_token_callback():
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, "/login")
 api.add_resource(UserLogout, "/logout")
-api.add_resource(User, "/user/<int:user_id>")
+#api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(UserDelete, "/user-delete")
 api.add_resource(TokenRefresh, "/token-refresh")
 api.add_resource(Confirmation, "/user-confirmation/<string:confirmation_id>")
